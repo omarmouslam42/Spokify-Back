@@ -4,7 +4,7 @@ import cors from "cors";
 import { connectDB } from "./lib/connectDB.js";
 import authRoutes from "./modules/auth/auth.router.js";
 import transcriptionRoutes from "./modules/Transcription/Transcription.routes.js";
-import ServerlessHttp from "serverless-http";
+import serverlessHttp from "serverless-http";
 const app = express();
 connectDB();
 
@@ -16,7 +16,8 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/", transcriptionRoutes);
-export const handler = ServerlessHttp(app);
+export const handler = serverlessHttp(app);
+
 // app.listen(Port, () => { 
 //   console.log(`Server is running on port ${Port}`);
 //   connectDB();
