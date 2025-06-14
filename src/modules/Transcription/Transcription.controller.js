@@ -45,25 +45,31 @@ console.log(newEntry);
   }
 };
 
+// export const getAllTranscriptions = async (req, res) => {
+//   try {
+//     const transcriptions = await Transcription.find().sort({ createdAt: -1 }); 
+//     console.log("✅ Done fetching.", transcriptions);
+//    return  res.status(200).json({
+//       success: true,
+//       count: transcriptions.length,
+//       data: transcriptions,
+//     });
+//   } catch (error) {
+//     console.error("Error getting transcriptions:", error);
+
+//    return res.status(500).json({
+//       success: false,
+//       message: "Server Error. Could not retrieve transcriptions.",
+//     });
+//   }
+// };
+
 export const getAllTranscriptions = async (req, res) => {
-  try {
-    const transcriptions = await Transcription.find().sort({ createdAt: -1 }); 
-    console.log("✅ Done fetching.", transcriptions);
-   return  res.status(200).json({
-      success: true,
-      count: transcriptions.length,
-      data: transcriptions,
-    });
-  } catch (error) {
-    console.error("Error getting transcriptions:", error);
-
-   return res.status(500).json({
-      success: false,
-      message: "Server Error. Could not retrieve transcriptions.",
-    });
-  }
+  return res.status(200).json({
+    message: "Test response works",
+    success: true,
+  });
 };
-
 
 export const getTranscriptionById = async (req, res) => {
   try {
