@@ -49,7 +49,7 @@ export const getAllTranscriptions = async (req, res) => {
   try {
     const transcriptions = await Transcription.find().sort({ createdAt: -1 }); 
 
-    res.status(200).json({
+   return  res.status(200).json({
       success: true,
       count: transcriptions.length,
       data: transcriptions,
