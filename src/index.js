@@ -16,7 +16,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/", transcriptionRoutes);
-export const handler = serverlessHttp(app);
+export default serverlessHttp(app);
 
 // app.listen(Port, () => { 
 //   console.log(`Server is running on port ${Port}`);
