@@ -1,21 +1,17 @@
 import mongoose from "mongoose";
 
 const TranscriptionSchema = new mongoose.Schema({
-  text: String,
+  transcription: { type: String, required: true }, // النص الأصلي
+  enhanced: { type: String,required:true },                      // النص المحسن
   metadata: {
-    language: String,
-    main_point: String,
-    tags: [String],
-    filename: String,
-    upload_date: String,
+    summary: { type: String },                     // الملخص
+    topics: { type: String },                      // المواضيع كسطر نصي
+    filename: { type: String },                    // اسم الملف
+    upload_date: { type: String },                 // تاريخ الرفع
+    language: { type: String, default: "ar" },     // اللغة الافتراضية
   },
-  tasks: [
-    {
-      task: String,
-      card_id: String,
-      card_url: String,
-    },
-  ],
+  tasks: { type: String },                         // قائمة المهام كسطر نصي
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 const Transcription = mongoose.model("Transcription", TranscriptionSchema);

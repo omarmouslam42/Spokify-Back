@@ -158,7 +158,7 @@ export const updateUserController = async (req, res) => {
 export const resetPassword = async (req, res) => {
   try {
     const { email } = req.body;
-
+ 
     if (!email) {
       return res.status(400).json({ message: "Email is required." });
     }
@@ -207,16 +207,16 @@ export const resetPassword = async (req, res) => {
 
 export const confirmResetPassword = async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
+    const { resetToken, newPassword } = req.body;
     console.log("Reset Password Confirm Data:", req.body);
 
-    if (!token || !newPassword) {
+    if (!resetToken || !newPassword) {
       return res
         .status(400)
         .json({ message: "Token and new password are required." });
     }
 
-    const user = await User.findOne({ resetToken: token });
+    const user = await User.findOne({ resetToken });
 
     if (!user) {
       return res.status(400).json({ message: "Invalid or expired token." });
