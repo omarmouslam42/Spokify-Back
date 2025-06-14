@@ -32,9 +32,8 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = hash({
+  this.password = await hash({
     plaintext: this.password,
-    salt: process.env.SALT_ROUND,
   });
 
   next();
@@ -42,7 +41,10 @@ userSchema.pre("save", async function (next) {
 
 // compare password
 userSchema.methods.comparePassword = async function (password) {
-  const isMatch = compare({ plaintext: password, hashValue: this.password });
+  const isMatch = await compare({
+    plaintext: password,
+    hashValue: this.password,
+  });
   return isMatch;
 };
 

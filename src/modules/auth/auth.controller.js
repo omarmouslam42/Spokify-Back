@@ -58,9 +58,8 @@ export const loginController = async (req, res) => {
         success: false,
       });
     }
-    console.log(user);
-
     const checkPassword = await user.comparePassword(password);
+    
     if (!checkPassword) {
       return res.status(400).json({
         message: "Invalid email or password",
@@ -123,7 +122,6 @@ export const updateUserController = async (req, res) => {
     if (profileImage && typeof profileImage === "string") {
       updateData.profileImage = profileImage;
     }
-    console.log("updateData", updateData);
 
     const updatedUser = await User.findByIdAndUpdate(id, updateData, {
       new: true,
@@ -157,7 +155,6 @@ export const updateUserController = async (req, res) => {
   }
 };
 
-
 export const resetPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -172,7 +169,7 @@ export const resetPassword = async (req, res) => {
     }
 
     const resetToken = Math.random().toString(36).substring(2, 15);
-    const tokenExpires = new Date(Date.now() + 30 * 60 * 1000); 
+    const tokenExpires = new Date(Date.now() + 30 * 60 * 1000);
 
     user.resetToken = resetToken;
     user.resetTokenExpires = tokenExpires;
@@ -180,12 +177,12 @@ export const resetPassword = async (req, res) => {
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
-      auth: { 
+      auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-    });  
- 
+    });
+
     const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
 
     const mailOptions = {
@@ -194,7 +191,7 @@ export const resetPassword = async (req, res) => {
       subject: "Reset your password",
       html: `
         <p>You've requested to reset your password.</p>
-        <p><a href="${resetLink}">Click here to reset</a></p>
+        <a href="${resetLink}">Click here to reset</a>
         <p>This link will expire in 30 minutes.</p>
       `,
     };
@@ -206,11 +203,12 @@ export const resetPassword = async (req, res) => {
     console.error("Reset Password Error:", error);
     res.status(500).json({ message: "Something went wrong." });
   }
-};  
+};
 
 export const confirmResetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
+    console.log("Reset Password Confirm Data:", req.body);
 
     if (!token || !newPassword) {
       return res
@@ -218,30 +216,22 @@ export const confirmResetPassword = async (req, res) => {
         .json({ message: "Token and new password are required." });
     }
 
-    // 1. هات اليوزر اللي عنده التوكن ده من قاعدة البيانات
     const user = await User.findOne({ resetToken: token });
 
     if (!user) {
       return res.status(400).json({ message: "Invalid or expired token." });
     }
 
-    // 2. تأكد إن التوكن لسه صالح (حسب تاريخ الانتهاء)
     if (user.resetTokenExpires < Date.now()) {
       return res.status(400).json({ message: "Token expired." });
     }
 
-    // 3. خزّن الباسورد الجديدة (مشفّرة)
-    hash({
+    const hashed = await hash({
       plaintext: newPassword,
-      salt: 10,
     });
-    const hashed = hash({
-      plaintext: newPassword,
-      salt: 10,
-    });
+
     user.password = hashed;
 
-    // 4. احذف التوكن بعد الاستخدام
     user.resetToken = null;
     user.resetTokenExpires = null;
 
