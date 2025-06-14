@@ -3,7 +3,7 @@ import "dotenv/config";
 import cors from "cors";
 import { connectDB } from "./lib/connectDB.js";
 import authRoutes from "./modules/auth/auth.router.js";
-import transcriptionRoutes from "./modules/Transcription/transcription.routes.js";
+import transcriptionRoutes from "./modules/Transcription/Transcription.routes.js";
 import ServerlessHttp from "serverless-http";
 const app = express();
 connectDB();

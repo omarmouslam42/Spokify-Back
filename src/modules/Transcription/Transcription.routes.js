@@ -1,5 +1,5 @@
 import express from "express";
-import { createTranscription, deleteTranscription, getAllTranscriptions, getTranscriptionById } from "../Transcription/transcription.controller.js";
+import { createTranscription, deleteTranscription, getAllTranscriptions, getTranscriptionById } from "../Transcription/Transcription.controller.js";
 
 const router = express.Router();
 
