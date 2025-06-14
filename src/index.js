@@ -6,7 +6,7 @@ import authRoutes from "./modules/auth/auth.router.js";
 import transcriptionRoutes from "./modules/Transcription/Transcription.routes.js";
 import serverlessHttp from "serverless-http";
 const app = express();
-connectDB();
+// connectDB();
 
 const Port = process.env.PORT || 4000;
 app.use(cors());
