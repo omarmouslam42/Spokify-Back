@@ -4,16 +4,20 @@ import cors from "cors";
 import { connectDB } from "./lib/connectDB.js";
 import authRoutes from "./modules/auth/auth.router.js";
 import transcriptionRoutes from "./modules/Transcription/transcription.routes.js";
+import ServerlessHttp from "serverless-http";
 const app = express();
-const Port = process.env.PORT || 4000;
+connectDB();
 
+const Port = process.env.PORT || 4000;
+app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-app.use(cors());
+
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/", transcriptionRoutes);
-app.listen(Port, () => {
-  console.log(`Server is running on port ${Port}`);
-  connectDB();
-});
+export const handler = ServerlessHttp(app);
+// app.listen(Port, () => { 
+//   console.log(`Server is running on port ${Port}`);
+//   connectDB();
+// });
