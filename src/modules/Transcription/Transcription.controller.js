@@ -1,4 +1,6 @@
 import Transcription from "../../lib/models/Transcription.js";
+import path from "path";
+import fs from "fs";
 
 export const createTranscription = async (req, res) => {
   try {
@@ -16,20 +18,31 @@ export const createTranscription = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    let audioInfo = null;
+    if (req.file) {
+      const audioPath =  req.file.filename
+      audioInfo = {
+        originalName: req.file.originalname,
+        mimeType: req.file.mimetype,
+        size: req.file.size,
+        url: `\\${audioPath.replace(/\\/g, "\\")}`,   
+      };
+    }
+
     const newEntry = await Transcription.create({
       enhanced,
       transcription,
+      audio: audioInfo,
       metadata: {
         summary,
         topics,
-        filename: "recording.wav",
+        filename: req.file?.originalname || "recording.wav",
         upload_date: new Date().toISOString(),
         language: "ar",
       },
       tasks,
       user: userId,
     });
-    console.log(newEntry);
 
     return res.status(201).json({
       message: "Transcription saved successfully",
@@ -44,6 +57,7 @@ export const createTranscription = async (req, res) => {
     });
   }
 };
+
 
 export const getAllTranscriptions = async (req, res) => {
   try {
@@ -108,3 +122,49 @@ export const deleteTranscription = async (req, res) => {
     console.log("Error deleting transcription:", error);
   }
 };
+export const getTranscriptionsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const transcriptions = await Transcription.find({ user: userId })
+      .populate("user", "userName")     
+      .sort({ createdAt: -1 });
+
+    if (!transcriptions || transcriptions.length === 0) {
+      return res.status(404).json({
+        message: "No transcriptions found for this user.",
+        success: false,
+      });
+    }
+
+    const response = transcriptions.map((item) => ({
+      id: item._id,
+      transcription: item.transcription,
+      enhanced: item.enhanced,
+      summary: item.metadata?.summary,
+      topics: item.metadata?.topics,
+      tasks: item.tasks,
+      audio: item.audio?.url
+        ? {
+            filename: item.audio.originalName,
+            downloadUrl: item.audio.url,
+          }
+        : null,
+      userName: item.user?.userName,
+      upload_date: item.metadata?.upload_date,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      count: response.length,
+      data: response,
+    });
+  } catch (error) {
+    console.error("Error fetching user transcriptions:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
