@@ -5,27 +5,29 @@ import { connectDB } from "./lib/connectDB.js";
 import authRoutes from "./modules/auth/auth.router.js";
 import transcriptionRoutes from "./modules/Transcription/Transcription.routes.js";
 import serverlessHttp from "serverless-http";
-
 const app = express();
-connectDB();                               // اتصال وحيد
+connectDB();
 
+const Port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
+app.get("/test", (req, res) => {
+  res.send("✅ Route works");
+});
 app.get("/", (req, res) => {
   res.send("🚀 Spokify backend is running.");
 });
-app.get("/test", (_, res) => res.send("✅ Route works"));
-app.get("/favicon.ico", (_, res) => res.status(204).end());
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.use("/api/v1/auth", authRoutes);
-app.use("/api", transcriptionRoutes);       // لاحظ بدون "/" زائدة
+app.use("/api/", transcriptionRoutes);
 
-export default serverlessHttp(app);         // default export مطلوب فى Vercel
+// export default serverlessHttp(app);
 
 
-// app.listen(Port, () => { 
-//   console.log(`Server is running on port ${Port}`);
-//   connectDB();
-// });
+app.listen(Port, () => { 
+  console.log(`Server is running on port ${Port}`);
+  connectDB();
+});
