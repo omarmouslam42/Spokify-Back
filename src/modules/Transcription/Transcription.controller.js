@@ -48,7 +48,7 @@ console.log(newEntry);
 export const getAllTranscriptions = async (req, res) => {
   try {
     const transcriptions = await Transcription.find().sort({ createdAt: -1 }); 
-
+    console.log("✅ Done fetching.", transcriptions);
    return  res.status(200).json({
       success: true,
       count: transcriptions.length,
@@ -57,7 +57,7 @@ export const getAllTranscriptions = async (req, res) => {
   } catch (error) {
     console.error("Error getting transcriptions:", error);
 
-    res.status(500).json({
+   return res.status(500).json({
       success: false,
       message: "Server Error. Could not retrieve transcriptions.",
     });
