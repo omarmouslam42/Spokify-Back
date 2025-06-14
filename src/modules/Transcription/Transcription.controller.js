@@ -65,11 +65,30 @@ console.log(newEntry);
 // };
 
 export const getAllTranscriptions = async (req, res) => {
-  return res.status(200).json({
-    message: "Test response works",
-    success: true,
-  });
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+
+    const transcriptions = await Transcription.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Transcription.countDocuments();
+
+    return res.status(200).json({
+      success: true,
+      count: transcriptions.length,
+      totalPages: Math.ceil(total / limit),
+      data: transcriptions,
+    });
+  } catch (error) {
+    console.error("Get all error:", error);
+    return res.status(500).json({ success: false, message: "Failed to fetch" });
+  }
 };
+
 
 export const getTranscriptionById = async (req, res) => {
   try {
