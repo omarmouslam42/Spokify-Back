@@ -17,12 +17,13 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.get("/", (req, res) => {
   res.send("🚀 Spokify backend is running.");
 });
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/", transcriptionRoutes);
 
 export default serverlessHttp(app);
-app.get("/favicon.ico", (req, res) => res.status(204).end());
+
 
 // app.listen(Port, () => { 
 //   console.log(`Server is running on port ${Port}`);
